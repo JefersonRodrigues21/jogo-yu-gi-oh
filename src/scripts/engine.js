@@ -64,18 +64,26 @@ async function createCardImage(IdCard, fieldSide) {
     cardImage.classList.add("card"); /*classifica carta com efeito do mouse ao passar*/
 
     if (fieldSide === playerSides.player1) {
+
+        cardImage.addEventListener("mouseover", () => { /*desenha a carta ao passar o mouse*/
+            drawSelectCard(IdCard);
+        });
+
         cardImage.addEventListener("click", () => {
             setCardsField(cardImage.getAttribute("data-id"));
         });
     }
 
-    cardImage.addEventListener("mouseover", () => { /*desenha a carta ao passar o mouse*/
-        drawSelectCard(IdCard);
-    });
+    
 
     return cardImage;
 }
 
+async function drawSelectCard(index) {
+    state.cardsSprites.avatar.src = cardData[index].img;
+    state.cardsSprites.name.innerText = cardData[index].name;
+    state.cardsSprites.type.innerText = "Attribute : " + cardData[index].type;
+}
 /*Assinatura dos métodos*/
 async function drawCards(cardNumbers, fieldSide) {
     for (let i = 0; i < cardNumbers; i++) {
