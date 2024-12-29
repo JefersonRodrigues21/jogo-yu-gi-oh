@@ -19,10 +19,11 @@ const state ={ /*estado de memória */
 };
 
 const playerSides = {
-    player1: "player-field-card",
-    computer: "computer-field-card",
+    player1: "player-cards",
+    computer: "computer-cards",
 };
-const pathImages = ".src/assets/icons";
+
+const pathImages = "./src/assets/icons/";
 const cardData = [
     {
         id: 0,
@@ -50,20 +51,20 @@ const cardData = [
     },
 ];
 
-async function getcreateCardId() {/*função de Id aleatório*/
-    const randomIndex =Math.floor(Math.random() * cardData.length);
+async function getRandomCardId() {/*função de Id aleatório*/
+    const randomIndex = Math.floor(Math.random() * cardData.length);
     return cardData[randomIndex].id;
 }
 
-async function createCardImage(randomIdCard, fieldSide) {
+async function createCardImage(IdCard, fieldSide) {
     const cardImage = document.createElement("img");
     cardImage.setAttribute("height", "100px");
-    cardImage.setAttribute("src", ".src/assets/icons/card-back.png"); /*atributo para verso da carta*/
+    cardImage.setAttribute("src", "./src/assets/icons/card-back.png"); /*atributo para verso da carta*/
     cardImage.setAttribute("data-id", IdCard); /*Data - para atributos dinâmicos*/
     cardImage.classList.add("card"); /*classifica carta com efeito do mouse ao passar*/
 
     if (fieldSide === playerSides.player1) {
-        cardImage.setAttribute("click", () => {
+        cardImage.addEventListener("click", () => {
             setCardsField(cardImage.getAttribute("data-id"));
         });
     }
@@ -79,13 +80,13 @@ async function createCardImage(randomIdCard, fieldSide) {
 async function drawCards(cardNumbers, fieldSide) {
     for (let i = 0; i < cardNumbers; i++) {
         const randomIdCard = await getRandomCardId();
-        const cardImage = await getcreateCardImage(randomIdCard, fieldSide);
+        const cardImage = await createCardImage(randomIdCard, fieldSide);
 
         document.getElementById(fieldSide).appendChild(cardImage);
     }
 }
 
-function init(){
-    drawCards(5, "playerSides.player1");
-    drawCards(5, "playerSides.computer");
+function init() {
+    drawCards(5, playerSides.player1);
+    drawCards(5, playerSides.computer);
 }
