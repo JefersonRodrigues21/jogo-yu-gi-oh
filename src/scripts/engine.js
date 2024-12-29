@@ -49,6 +49,32 @@ const cardData = [
         LoseOf: [1],
     },
 ];
+
+async function getcreateCardId() {/*função de Id aleatório*/
+    const randomIndex =Math.floor(Math.random() * cardData.length);
+    return cardData[randomIndex].id;
+}
+
+async function createCardImage(randomIdCard, fieldSide) {
+    const cardImage = document.createElement("img");
+    cardImage.setAttribute("height", "100px");
+    cardImage.setAttribute("src", ".src/assets/icons/card-back.png"); /*atributo para verso da carta*/
+    cardImage.setAttribute("data-id", IdCard); /*Data - para atributos dinâmicos*/
+    cardImage.classList.add("card"); /*classifica carta com efeito do mouse ao passar*/
+
+    if (fieldSide === playerSides.player1) {
+        cardImage.setAttribute("click", () => {
+            setCardsField(cardImage.getAttribute("data-id"));
+        });
+    }
+
+    cardImage.addEventListener("mouseover", () => { /*desenha a carta ao passar o mouse*/
+        drawSelectCard(IdCard);
+    });
+
+    return cardImage;
+}
+
 /*Assinatura dos métodos*/
 async function drawCards(cardNumbers, fieldSide) {
     for (let i = 0; i < cardNumbers; i++) {
