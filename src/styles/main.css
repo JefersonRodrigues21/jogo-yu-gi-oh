@@ -24,8 +24,7 @@ a:hover {
   height: 100vh;
 }
 
-.bg-video::after {
-  /* before(antes) */
+.bg-video::after { /* before(antes) */
   content: "";
   position: absolute;
   top: 0;
