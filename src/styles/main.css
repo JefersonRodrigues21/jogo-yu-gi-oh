@@ -48,7 +48,6 @@ a:hover {
 }
 
 .container__left {
-  border: 1px solid red;
   width: 35%;
   min-width: 300px;
   display: flex;
