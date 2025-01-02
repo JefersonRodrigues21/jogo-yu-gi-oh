@@ -89,16 +89,40 @@ async function setCardsField(cardId) {
 
     let computerCardId = await getRandomCardId();
 
-    state.fieldCards.player.style.display = "block";
-    state.fieldCards.computer.style.display = "block";
+    await ShowHiddenCardFielsImages(true);
 
-    state.fieldCards.player.src = cardData[cardId].img;
-    state.fieldCards.computer.src = cardData[computerCardId].img;
+    await hiddenCardDetails();
 
-    // let duelResults = await checkDuelResults(cardId, computerCardId);
+    await drawCardsInfield(cardId, computerCardId);
+
+    let duelResults = await checkDuelResults(cardId, computerCardId);
 
     await updateScore();
+
     await drawButton(duelResults);
+}
+
+async function drawCardsInfield(cardId, computerCardId) {
+    state.fieldCards.player.src = cardData[cardId].img;
+    state.fieldCards.computer.src = cardData[computerCardId].img;
+}
+
+async function ShowHiddenCardFielsImages(value) {
+    
+    if(value === true) {
+    state.fieldCards.player.style.display = "block";
+    state.fieldCards.computer.style.display = "block";
+    }
+
+    if(value === false) {
+    state.fieldCards.player.style.display = "none";
+    state.fieldCards.computer.style.display = "none";
+}
+
+async function hiddenCardDetails() {
+    state.cardSprites.avatar.src = "";
+    state.cardSprites.name.innerText = "";
+    state.cardSprites.type.innerText = "";
 }
 
 async function drawButton(text) {
@@ -111,7 +135,7 @@ async function updateScore() {
 }
 
 async function checkDuelResults(playerCardId, computerCardId) {
-    let duelResults = "DRAW";
+    let duelResults = "Draw";
     let playerCard = cardData[playerCardId];
 
     if (playerCard.WinOf.includes(computerCardId)) {
@@ -123,7 +147,7 @@ async function checkDuelResults(playerCardId, computerCardId) {
         state.score.computerScore++;
     }
 
-    await playerAudio("duelResults");
+    await playAudio("duelResults");
 
     return duelResults;
 }
@@ -171,6 +195,9 @@ async function playerAudio(status) {
 }
 
 function init() {
+    
+    ShowHiddenCardFielsImages(false);
+
     drawCards(5, playerSides.player1);
     drawCards(5, playerSides.computer);
 }
