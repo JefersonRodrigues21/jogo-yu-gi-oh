@@ -31,6 +31,7 @@ const playerSides = {
 };
 
 const pathImages = "./src/assets/icons/";
+
 const cardData = [
     {
         id: 0,
@@ -40,6 +41,7 @@ const cardData = [
         WinOf: [1],
         LoseOf: [2],
     },
+
     {
         id: 1,
         name: "Dark Magician",
@@ -48,6 +50,7 @@ const cardData = [
         WinOf: [2],
         LoseOf: [0],
     },
+    
     {
         id: 2,
         name: "Exodia",
@@ -63,17 +66,17 @@ async function getRandomCardId() {/*função de Id aleatório*/
     return cardData[randomIndex].id;
 }
 
-async function createCardImage(IdCard, fieldSide) {
+async function createCardImage(idCard, fieldSide) {
     const cardImage = document.createElement("img");
     cardImage.setAttribute("height", "100px");
     cardImage.setAttribute("src", "./src/assets/icons/card-back.png"); /*atributo para verso da carta*/
-    cardImage.setAttribute("data-id", IdCard); /*Data - para atributos dinâmicos*/
+    cardImage.setAttribute("data-id", idCard); /*Data - para atributos dinâmicos*/
     cardImage.classList.add("card"); /*classifica carta com efeito do mouse ao passar*/
 
     if (fieldSide === playerSides.player1) {
 
         cardImage.addEventListener("mouseover", () => { /*desenha a carta ao passar o mouse*/
-            drawSelectCard(IdCard);
+            drawSelectCard(idCard);
         });
 
         cardImage.addEventListener("click", () => {
@@ -95,7 +98,7 @@ async function setCardsField(cardId) {
 
     await drawCardsInField(cardId, computerCardId);
 
-    let duelResults = await duelResults(cardId, computerCardId);
+    let duelResults = await checkDuelResults(cardId, computerCardId);
 
     await updateScore();
 
@@ -117,21 +120,22 @@ async function ShowHiddenCardFieldsImages(value) {
     if(value === false) {
     state.fieldCards.player.style.display = "none";
     state.fieldCards.computer.style.display = "none";
+    }
 }
 
 async function hiddenCardDetails() {
     state.cardSprites.avatar.src = "";
-    state.cardSprites.name.innerText = "";
-    state.cardSprites.type.innerText = "";
+    state.cardSprites.name.innerHTML = "";
+    state.cardSprites.type.innerHTML = "";
 }
 
 async function drawButton(text) {
-    state.actions.button.innerText = text.toUpperCase();
+    state.actions.button.innerText = text;
     state.actions.button.style.display = "block";
 }
 
 async function updateScore() {
-    state.score.scoreBox.innerText = `win: ${state.score.playerScore} | lose: ${state.score.computerScore}`;
+    state.score.scoreBox.innerHTML = `win: ${state.score.playerScore} | lose: ${state.score.computerScore}`;
 }
 
 async function checkDuelResults(playerCardId, computerCardId) {
@@ -140,14 +144,15 @@ async function checkDuelResults(playerCardId, computerCardId) {
 
     if (playerCard.WinOf.includes(computerCardId)) {
         duelResults = "Win";
+        await playAudio("win");
         state.score.playerScore++;
     }
+
     if (playerCard.LoseOf.includes(computerCardId)) {
         duelResults = "Lose";
+        await playAudio("lose");
         state.score.computerScore++;
     }
-
-    await playAudio("duelResults");
 
     return duelResults;
 }
@@ -164,7 +169,7 @@ async function removeAllCardsImages() {
 async function drawSelectCard(index) {
     state.cardSprites.avatar.src = cardData[index].img;
     state.cardSprites.name.innerText = cardData[index].name;
-    state.cardSprites.type.innerText = "Attibute : " + cardData[index].type;
+    state.cardSprites.type.innerText = "Atributo : " + cardData[index].type;
 }
 /*Assinatura dos métodos*/
 async function drawCards(cardNumbers, fieldSide) {
@@ -189,19 +194,28 @@ async function resetDuel() {
 async function playAudio(status) {
     const audio = new Audio(`./src/assets/audios/${status}.wav`);
 
-    try {
     audio.play();
-    } catch {}
 }
 
 function init() {
+
     ShowHiddenCardFieldsImages(false);
 
     drawCards(5, playerSides.player1);
     drawCards(5, playerSides.computer);
 
     const bgm = document.getElementById("bgm");
-    bgm.play();
+    
+    //adiciona um ouvinte de evento para o movimento do mouse
+    document.body.addEventListener("mousemove", function() {
+        //Reproduz o áudio quando o mouse se move
+        bgm.play();
+
+        //Remove o ouvinte após a primeira reprodução para evitar múltiplas tentativas de reprodução
+        document.body.addEventListener("mousemove");
+
+    });
+    
 }
 
 init();
